@@ -126,3 +126,32 @@
 [2026-08-17 23:18:26] ERROR    | Unknown command: cat>>punas
 [2026-08-17 23:18:41] COMMAND  | [SUCCESS] cat >>punas
 [2026-08-17 23:18:46] COMMAND  | [SUCCESS] cat > punas
+[2026-08-18 12:21:57] SESSION  | Shell session started
+[2026-08-18 12:22:03] COMMAND  | [SUCCESS] pwd
+[2026-08-18 12:22:07] COMMAND  | [SUCCESS] ls
+[2026-08-18 12:22:21] COMMAND  | [SUCCESS] mkdir Projects
+[2026-08-18 12:22:29] COMMAND  | [SUCCESS] cd Projects
+[2026-08-18 12:22:34] COMMAND  | [SUCCESS] cd ..
+[2026-08-18 12:23:33] COMMAND  | [SUCCESS] touch Projects
+[2026-08-18 12:23:50] COMMAND  | [FAILED] cat>punas
+[2026-08-18 12:23:50] ERROR    | Unknown command: cat>punas
+[2026-08-18 12:26:23] SESSION  | Shell session started
+[2026-08-18 12:26:26] COMMAND  | [FAILED] pw
+[2026-08-18 12:26:26] ERROR    | Unknown command: pw
+[2026-08-18 12:26:42] SESSION  | Shell session started
+[2026-08-18 12:27:02] COMMAND  | [SUCCESS] pwd
+[2026-08-18 12:27:04] COMMAND  | [SUCCESS] ls
+[2026-08-18 12:27:27] COMMAND  | [SUCCESS] mkdir Projects
+[2026-08-18 12:27:31] COMMAND  | [SUCCESS] ls
+[2026-08-18 12:27:48] COMMAND  | [SUCCESS] tree
+[2026-08-18 12:37:11] SESSION  | Shell session ended
+[2026-08-18 12:37:11] COMMAND  | [SUCCESS] exit
+[2026-08-18 12:37:27] SESSION  | Shell session started
+[2026-08-18 12:38:16] COMMAND  | [SUCCESS] pwd
+[2026-08-18 12:38:27] COMMAND  | [SUCCESS] ls
+[2026-08-18 12:38:36] COMMAND  | [SUCCESS] cd home
+[2026-08-18 12:38:43] COMMAND  | [SUCCESS] cd student
+[2026-08-18 12:38:46] COMMAND  | [SUCCESS] ls
+[2026-08-18 12:39:03] COMMAND  | [SUCCESS] cat README.txt
+[2026-08-18 12:39:20] SESSION  | Shell session ended
+[2026-08-18 12:39:20] COMMAND  | [SUCCESS] exit

@@ -66,9 +66,100 @@ class VirtualFileSystem:
     """In-memory virtual filesystem for safe command execution."""
     
     def __init__(self) -> None:
-        """Initialize the virtual filesystem."""
+        """Initialize the virtual filesystem and populate default structure."""
         self.root = VirtualDirectory(name="")
         self.current_directory = self.root
+
+        # Helper to create nested directories (creates parents as needed)
+        def _mkpath(parts: list[str]) -> VirtualDirectory:
+            cur = self.root
+            for part in parts:
+                child = cur.get_child(part)
+                if child is None:
+                    new_dir = VirtualDirectory(name=part, parent=cur)
+                    cur.add_child(new_dir)
+                    cur = new_dir
+                else:
+                    if isinstance(child, VirtualDirectory):
+                        cur = child
+                    else:
+                        # If a file exists where a dir is expected, stop and return current
+                        return cur
+            return cur
+
+        # Build the directory tree as specified
+        _mkpath(["bin"])
+        _mkpath(["etc"])
+        _mkpath(["home", "student", "Desktop"])
+        _mkpath(["home", "student", "Documents"])
+        _mkpath(["home", "student", "Downloads"])
+        _mkpath(["home", "student", "Projects", "Python"])
+        _mkpath(["home", "student", "Projects", "Linux"])
+        _mkpath(["home", "student"])
+        _mkpath(["tmp"])
+        _mkpath(["usr", "bin"])
+        _mkpath(["usr", "lib"])
+        _mkpath(["var", "log"])
+
+        # Shortcuts to directories
+        bin_dir = self.root.get_child("bin")
+        etc_dir = self.root.get_child("etc")
+        home_student = self.root.get_child("home").get_child("student")
+        tmp_dir = self.root.get_child("tmp")
+        usr_bin = self.root.get_child("usr").get_child("bin")
+        var_log = self.root.get_child("var").get_child("log")
+
+        # Add mock executables in /bin
+        if isinstance(bin_dir, VirtualDirectory):
+            bin_dir.add_child(VirtualFile(name="bash", content="#!/bin/sh\necho \"bash (mock)\"\n"))
+            bin_dir.add_child(VirtualFile(name="cat", content="#!/bin/sh\n# mock cat\n"))
+            bin_dir.add_child(VirtualFile(name="cp", content="#!/bin/sh\n# mock cp\n"))
+            bin_dir.add_child(VirtualFile(name="ls", content="#!/bin/sh\n# mock ls\n"))
+            bin_dir.add_child(VirtualFile(name="pwd", content="#!/bin/sh\n# mock pwd\n"))
+
+        # Add /etc files
+        if isinstance(etc_dir, VirtualDirectory):
+            etc_dir.add_child(VirtualFile(name="hostname", content="punas-vm\n"))
+            etc_dir.add_child(VirtualFile(name="os-release", content="NAME=\"Punas Linux\"\nVERSION=\"0.1-mock\"\n"))
+
+        # Add home/student files
+        if isinstance(home_student, VirtualDirectory):
+            desktop = home_student.get_child("Desktop")
+            if isinstance(desktop, VirtualDirectory):
+                desktop.add_child(VirtualFile(name="welcome.txt", content="Welcome to Punas Power Shell!\n"))
+
+            docs = home_student.get_child("Documents")
+            if isinstance(docs, VirtualDirectory):
+                docs.add_child(VirtualFile(name="notes.txt", content="These are some sample notes.\n"))
+                docs.add_child(VirtualFile(name="report.txt", content="This is a mock report.\n"))
+
+            downloads = home_student.get_child("Downloads")
+            if isinstance(downloads, VirtualDirectory):
+                downloads.add_child(VirtualFile(name="sample.pdf", content="%PDF-1.4 (mock PDF content)\n"))
+
+            projects = home_student.get_child("Projects")
+            if isinstance(projects, VirtualDirectory):
+                python_proj = projects.get_child("Python")
+                if isinstance(python_proj, VirtualDirectory):
+                    python_proj.add_child(VirtualFile(name="hello.py", content="print('Hello from mock Python project')\n"))
+
+                linux_proj = projects.get_child("Linux")
+                if isinstance(linux_proj, VirtualDirectory):
+                    linux_proj.add_child(VirtualFile(name="commands.txt", content="ls\npc\ncat\n"))
+
+            home_student.add_child(VirtualFile(name="README.txt", content="Student home directory (mock).\n"))
+
+        # Add /tmp content
+        if isinstance(tmp_dir, VirtualDirectory):
+            tmp_dir.add_child(VirtualFile(name="temp.txt", content="temporary file\n"))
+
+        # Add /var/log/system.log
+        if isinstance(var_log, VirtualDirectory):
+            var_log.add_child(VirtualFile(name="system.log", content="[INFO] Mock system log initialized\n"))
+
+        # Ensure /usr/bin exists (empty) and /usr/lib exists
+        if isinstance(usr_bin, VirtualDirectory):
+            usr_bin.add_child(VirtualFile(name="mockutil", content="# mock util\n"))
     
     def get_path_parts(self, path: str) -> list[str]:
         """Split a path into components."""
