@@ -291,7 +291,42 @@ class VirtualFileSystem:
         new_dir = VirtualDirectory(name=name, parent=self.current_directory)
         self.current_directory.add_child(new_dir)
         return (True, f"Directory created: {name}")
-    
+    def rmdir(self, name: str) -> tuple[bool, str]:
+        """
+        Remove an empty directory.
+
+        Returns:
+            Tuple containing success status and message.
+        """
+        if not name:
+            return (False, "rmdir: name cannot be empty")
+
+        child = self.current_directory.get_child(name)
+
+        if child is None:
+            return (
+                False,
+                f"rmdir: failed to remove '{name}': "
+                "No such file or directory",
+            )
+
+        if isinstance(child, VirtualFile):
+            return (
+                False,
+                f"rmdir: failed to remove '{name}': "
+                "Not a directory",
+            )
+
+        if not child.is_empty():
+            return (
+                False,
+                f"rmdir: failed to remove '{name}': "
+                "Directory not empty",
+            )
+
+        self.current_directory.remove_child(name)
+
+        return (True, f"Directory removed: {name}")
     def touch(self, filename: str) -> tuple[bool, str]:
         """
         Create an empty file or update its timestamp.
@@ -355,7 +390,25 @@ class VirtualFileSystem:
         else:
             # Print to output
             return (True, content)
-    
+    def write(self, filename: str, content: str) -> str:
+        """
+        Write content to a file.
+
+        Creates the file if it does not exist.
+        Replaces existing file content if it exists.
+        Raises FileNotFoundError or IsADirectoryError when appropriate.
+        """
+        if not filename:
+            raise ValueError("write: filename cannot be empty")
+
+        success, message = self.vfs.echo(content, filename)
+
+        if not success:
+            if "is a directory" in message:
+                raise IsADirectoryError(message)
+            raise FileNotFoundError(message)
+
+        return message
     def rm(self, name: str, recursive: bool = False) -> tuple[bool, str]:
         """
         Delete a file or directory.

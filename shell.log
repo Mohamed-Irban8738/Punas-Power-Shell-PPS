@@ -155,3 +155,111 @@
 [2026-08-18 12:39:03] COMMAND  | [SUCCESS] cat README.txt
 [2026-08-18 12:39:20] SESSION  | Shell session ended
 [2026-08-18 12:39:20] COMMAND  | [SUCCESS] exit
+[2026-08-18 13:52:37] SESSION  | Shell session started
+[2026-08-18 13:52:49] COMMAND  | [SUCCESS] touch notes.txt
+[2026-08-18 13:53:54] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 13:56:49] COMMAND  | [SUCCESS] touch notes.txt
+[2026-08-18 13:57:04] ERROR    | 'FileManager' object has no attribute 'write'
+[2026-08-18 13:57:17] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 13:59:01] SESSION  | Shell session ended
+[2026-08-18 13:59:01] COMMAND  | [SUCCESS] exit
+[2026-08-18 13:59:10] SESSION  | Shell session started
+[2026-08-18 13:59:22] COMMAND  | [FAILED] toch notes.txt
+[2026-08-18 13:59:22] ERROR    | Unknown command: toch
+[2026-08-18 13:59:32] COMMAND  | [SUCCESS] touch notes.txt
+[2026-08-18 13:59:54] COMMAND  | [SUCCESS] write notes.txt
+[2026-08-18 14:00:01] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 14:02:43] COMMAND  | [FAILED] append notes.txt
+[2026-08-18 14:02:43] ERROR    | Unknown command: append
+[2026-08-18 14:09:21] SESSION  | Shell session started
+[2026-08-18 14:09:40] COMMAND  | [SUCCESS] write notes.txt
+[2026-08-18 14:09:54] COMMAND  | [FAILED] append notes.txt
+[2026-08-18 14:09:54] ERROR    | Unknown command: append
+[2026-08-18 14:10:14] SESSION  | Shell session ended
+[2026-08-18 14:10:14] COMMAND  | [SUCCESS] exit
+[2026-08-18 14:10:21] SESSION  | Shell session started
+[2026-08-18 14:10:27] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 14:11:28] COMMAND  | [SUCCESS] write notes.txt
+[2026-08-18 14:11:40] COMMAND  | [FAILED] append notes.txt
+[2026-08-18 14:11:40] ERROR    | Unknown command: append
+[2026-08-18 14:14:17] SESSION  | Shell session started
+[2026-08-18 14:14:35] COMMAND  | [SUCCESS] write notes.txt
+[2026-08-18 14:14:56] COMMAND  | [SUCCESS] append notes.txt
+[2026-08-18 14:15:02] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 14:16:15] COMMAND  | [SUCCESS] history
+[2026-08-18 14:16:32] COMMAND  | [SUCCESS] cat notes
+[2026-08-18 14:16:37] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 14:16:43] COMMAND  | [SUCCESS] history
+[2026-08-18 14:20:42] SESSION  | Shell session ended
+[2026-08-18 14:20:42] COMMAND  | [SUCCESS] exit
+[2026-08-18 14:22:38] SESSION  | Shell session started
+[2026-08-18 14:23:06] COMMAND  | [SUCCESS] write notes.txt
+[2026-08-18 14:23:16] COMMAND  | [SUCCESS] rename notes.txt backup.txt
+[2026-08-18 14:23:23] COMMAND  | [SUCCESS] ls
+[2026-08-18 14:23:39] COMMAND  | [SUCCESS] cat backup.txt
+[2026-08-18 14:24:23] COMMAND  | [SUCCESS] find backup.txt
+[2026-08-18 14:24:47] COMMAND  | [SUCCESS] echo backup.txt
+[2026-08-18 14:25:05] COMMAND  | [SUCCESS] rm backup.txt
+[2026-08-18 14:25:12] COMMAND  | [SUCCESS] tree
+[2026-08-18 14:33:03] SESSION  | Shell session ended
+[2026-08-18 14:33:03] COMMAND  | [SUCCESS] exit
+[2026-08-18 14:33:22] SESSION  | Shell session started
+[2026-08-18 14:33:37] COMMAND  | [SUCCESS] write notes.txt
+[2026-08-18 14:33:47] COMMAND  | [SUCCESS] find notes.txt
+[2026-08-18 14:40:07] SESSION  | Shell session started
+[2026-08-18 14:40:15] COMMAND  | [SUCCESS] find notes.txt
+[2026-08-18 14:40:43] COMMAND  | [SUCCESS] cd home
+[2026-08-18 14:40:54] COMMAND  | [SUCCESS] cd /student/Documents
+[2026-08-18 14:41:03] COMMAND  | [SUCCESS] cd student
+[2026-08-18 14:41:12] COMMAND  | [SUCCESS] cd Documents
+[2026-08-18 14:41:20] COMMAND  | [SUCCESS] cp notes.txt
+[2026-08-18 14:42:08] COMMAND  | [SUCCESS] cp notes.txt backup.txt
+[2026-08-18 14:42:17] COMMAND  | [SUCCESS] cat backup.txt
+[2026-08-18 14:43:29] COMMAND  | [SUCCESS] cat notes.txt
+[2026-08-18 14:45:15] COMMAND  | [SUCCESS] cd ..
+[2026-08-18 14:45:18] COMMAND  | [SUCCESS] cd ..
+[2026-08-18 14:45:20] COMMAND  | [SUCCESS] cd ..
+[2026-08-18 14:45:29] COMMAND  | [SUCCESS] mkdir Empty
+[2026-08-18 14:45:44] COMMAND  | [SUCCESS] ls
+[2026-08-18 14:45:52] COMMAND  | [SUCCESS] rmdir Empty
+[2026-08-18 14:46:55] COMMAND  | [SUCCESS] rmdir -r  Empty
+[2026-08-18 14:47:14] COMMAND  | [SUCCESS] mkdir Test
+[2026-08-18 14:47:34] COMMAND  | [SUCCESS] touch Test/file.txt
+[2026-08-18 14:48:17] COMMAND  | [SUCCESS] rmdir Test
+[2026-08-18 14:48:27] COMMAND  | [SUCCESS] rm -r Test
+[2026-08-18 14:51:40] SESSION  | Shell session ended
+[2026-08-18 14:51:40] COMMAND  | [SUCCESS] exit
+[2026-08-18 14:51:47] SESSION  | Shell session started
+[2026-08-18 14:51:53] COMMAND  | [SUCCESS] find notes.txt
+[2026-08-18 14:52:17] COMMAND  | [SUCCESS] mkdir Empty
+[2026-08-18 14:52:23] COMMAND  | [SUCCESS] ls
+[2026-08-18 14:52:35] COMMAND  | [SUCCESS] rmdir Empty
+[2026-08-18 14:52:40] COMMAND  | [SUCCESS] ls
+[2026-08-18 14:53:36] COMMAND  | [SUCCESS] mkdir Test
+[2026-08-18 14:53:37] COMMAND  | [SUCCESS] ls
+[2026-08-18 14:53:44] COMMAND  | [SUCCESS] touch Test/file.txt
+[2026-08-18 14:53:51] COMMAND  | [SUCCESS] rmdir Test
+[2026-08-18 14:54:06] COMMAND  | [SUCCESS] rm -r Test
+[2026-08-18 14:55:45] COMMAND  | [SUCCESS] clear
+[2026-08-18 14:57:50] SESSION  | Shell session ended
+[2026-08-18 14:57:50] COMMAND  | [SUCCESS] exit
+[2026-08-18 14:57:56] SESSION  | Shell session started
+[2026-08-18 14:58:10] COMMAND  | [SUCCESS] touch punas
+[2026-08-18 14:58:17] COMMAND  | [SUCCESS] cat punas
+[2026-08-18 14:58:30] COMMAND  | [SUCCESS] write punas
+[2026-08-18 14:58:40] COMMAND  | [SUCCESS] clear
+[2026-08-18 15:00:09] SESSION  | Shell session ended
+[2026-08-18 15:00:09] COMMAND  | [SUCCESS] EXIT
+[2026-08-18 15:00:28] SESSION  | Shell session started
+[2026-08-18 15:00:31] COMMAND  | [SUCCESS] date
+[2026-08-18 15:01:23] COMMAND  | [SUCCESS] mkdir Test
+[2026-08-18 15:01:29] COMMAND  | [SUCCESS] rmdir Test
+[2026-08-18 15:01:35] COMMAND  | [SUCCESS] mkdir Test
+[2026-08-18 15:01:40] COMMAND  | [SUCCESS] cd Test
+[2026-08-18 15:01:47] COMMAND  | [SUCCESS] touch file.txt
+[2026-08-18 15:01:57] COMMAND  | [SUCCESS] cd ..
+[2026-08-18 15:02:11] COMMAND  | [SUCCESS] rmdir Test
+[2026-08-18 15:02:20] COMMAND  | [SUCCESS] rm -r Test
+[2026-08-18 15:03:27] COMMAND  | [SUCCESS] history
+[2026-08-18 15:06:27] SESSION  | Shell session ended
+[2026-08-18 15:06:27] COMMAND  | [SUCCESS] exit

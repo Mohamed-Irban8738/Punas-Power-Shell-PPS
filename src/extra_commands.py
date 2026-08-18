@@ -18,17 +18,23 @@ def _rmdir_handler_factory(shell):
         if len(arguments) != 1:
             print("rmdir: expected exactly one directory name")
             return
-        name = arguments[0]
-        try:
-            # Attempt to remove directory without recursive
-            shell.file_manager.rm(name, recursive=False)
-            print(f"Directory removed: {name}")
-        except IsADirectoryError as err:
-            print(err)
-        except FileNotFoundError as err:
-            print(err)
-    return handler
 
+        name = arguments[0]
+
+        try:
+            shell.file_manager.rmdir(name)
+            print(f"Directory removed: {name}")
+
+        except FileNotFoundError as error:
+            print(error)
+
+        except NotADirectoryError as error:
+            print(error)
+
+        except OSError as error:
+            print(error)
+
+    return handler
 
 def _tree_handler_factory(shell):
     def walk_dir(vdir, prefix=""):
@@ -225,34 +231,84 @@ def _grep_handler_factory(shell):
 
 def _find_handler_factory(shell):
     def handler(arguments: list[str]):
-        # simple find: find [path] -name pattern
-        path = "."
-        name_pattern = None
-        if not arguments:
-            path = "."
-        else:
-            path = arguments[0]
-            if len(arguments) >= 3 and arguments[1] == "-name":
-                name_pattern = arguments[2]
-        # resolve start
+        """
+        Search recursively through the virtual filesystem.
+
+        Supported forms:
+            find
+            find <name>
+            find <path>
+            find <path> -name <pattern>
+        """
         vfs = shell.file_manager.vfs
-        start_dir, parts = vfs.resolve_path(path)
-        node, error = vfs.navigate_to(start_dir, parts)
-        if error:
-            print(f"find: '{path}': No such file or directory")
+
+        # Default search location
+        search_path = "."
+        name_pattern = None
+
+        if not arguments:
+            # find
+            search_path = "."
+
+        elif len(arguments) == 1:
+            # find backup.txt
+            # Treat a single argument as a filename/pattern to search for.
+            name_pattern = arguments[0]
+
+        elif len(arguments) == 3 and arguments[1] == "-name":
+            # find <path> -name <pattern>
+            search_path = arguments[0]
+            name_pattern = arguments[2]
+
+        else:
+            print("find: usage: find [path] [-name pattern]")
             return
 
-        def recurse(dirnode, prefix=""):
-            for name, child in dirnode.children.items():
-                full = (prefix + "/" + name).lstrip("/")
-                if name_pattern is None or name_pattern == name:
-                    print(f"/{full}")
-                if hasattr(child, 'children'):
-                    recurse(child, prefix + "/" + name)
-        recurse(node, prefix="" if path.startswith("/") else vfs.pwd())
+        # Resolve the search starting directory.
+        start_dir, parts = vfs.resolve_path(search_path)
+
+        # If searching by filename, search from current directory.
+        if len(arguments) == 1:
+            start_dir = vfs.current_directory
+            parts = []
+
+        # Resolve an explicit search path.
+        if parts:
+            node, error = vfs.navigate_to(start_dir, parts)
+
+            if error:
+                print(
+                    f"find: '{search_path}': "
+                    "No such file or directory"
+                )
+                return
+
+            search_root = node
+        else:
+            search_root = start_dir
+
+        def recurse(dirnode, current_path):
+            """Recursively search directories and files."""
+            for name, child in sorted(
+                dirnode.children.items(),
+                key=lambda item: item[0].lower(),
+            ):
+                if current_path == "/":
+                    child_path = f"/{name}"
+                else:
+                    child_path = f"{current_path}/{name}"
+                if name_pattern is None or name == name_pattern:
+                    print(child_path)
+
+                if hasattr(child, "children"):
+                    recurse(child, child_path)
+
+        # Start search.
+        current_path = vfs.pwd()
+
+        recurse(search_root, current_path)
+
     return handler
-
-
 def register_all(dispatcher, shell):
     """Read commands.txt and register handlers: implemented ones get full handlers, others get safe stubs."""
     base = os.path.join(os.path.dirname(__file__), '..')

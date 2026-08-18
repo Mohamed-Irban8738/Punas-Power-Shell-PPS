@@ -1,9 +1,9 @@
 """
 Core shell engine for Punas Power Shell (PPS).
 """
-
+from datetime import datetime
 from typing import Final
-
+import os
 from src.commands import CommandDispatcher
 from src.filesystem import FileManager
 from src.parser import CommandParser
@@ -101,7 +101,18 @@ class PunasShell:
             "cat",
             self._cat_command,
         )
-
+        self.dispatcher.register(
+        "date",
+        self._date_command,
+        )
+        self.dispatcher.register(
+        "write",
+        self._write_command,
+        )
+        self.dispatcher.register(
+        "append",
+        self._append_command,
+        )
         self.dispatcher.register(
             "echo",
             self._echo_command,
@@ -116,7 +127,10 @@ class PunasShell:
             "mv",
             self._mv_command,
         )
-
+        self.dispatcher.register(
+        "rename",
+        self._rename_command,
+        )
         self.dispatcher.register(
             "history",
             self._history_command,
@@ -126,7 +140,10 @@ class PunasShell:
             "config",
             self._config_command,
         )
-
+        self.dispatcher.register(
+        "clear",
+        self._clear_command,
+        )
         # Register extra commands from commands.txt (implemented or safe stubs)
         try:
             from src import extra_commands
@@ -181,7 +198,13 @@ class PunasShell:
             print(error)
         except PermissionError:
             print(f"mkdir: permission denied: {arguments[0]}")
+    def _date_command(self, arguments: list[str]) -> None:
+        """Display the current date and time."""
+        if arguments:
+            print("date: too many arguments")
+            return
 
+        print(datetime.now().strftime("%a %b %d %H:%M:%S %Y"))
     def _touch_command(self, arguments: list[str]) -> None:
         """Create an empty file or update its timestamp."""
         if len(arguments) != 1:
@@ -238,7 +261,92 @@ class PunasShell:
             print(error)
         except PermissionError:
             print(f"cat: permission denied: {arguments[0]}")
+    def _write_command(self, arguments: list[str]) -> None:
+        """Write multiple lines of text to a file."""
+        if len(arguments) != 1:
+            print("write: expected exactly one filename")
+            return
 
+        filename = arguments[0]
+
+        print("Enter text. Type .EOF on a new line to finish.")
+
+        lines: list[str] = []
+
+        while True:
+            try:
+                line = input()
+
+                if line == ".EOF":
+                    break
+
+                lines.append(line)
+
+            except EOFError:
+                print()
+                break
+
+        content = "\n".join(lines)
+
+        try:
+            self.file_manager.write(filename, content)
+            print(f"File written successfully: {filename}")
+
+        except IsADirectoryError as error:
+            print(error)
+
+        except ValueError as error:
+            print(error)
+
+        except PermissionError:
+            print(f"write: permission denied: {filename}")
+    def _append_command(self, arguments: list[str]) -> None:
+        """Append multiple lines of text to a file."""
+        if len(arguments) != 1:
+            print("append: expected exactly one filename")
+            return
+
+        filename = arguments[0]
+        print("Enter text. Type .EOF on a new line to finish.")
+
+        lines: list[str] = []
+
+        try:
+            while True:
+                line = input()
+
+                if line == ".EOF":
+                    break
+
+                lines.append(line)
+
+        except KeyboardInterrupt:
+            print()
+            print("append: cancelled")
+            return
+
+        except EOFError:
+            print()
+            print("append: cancelled")
+            return
+
+        content = "\n".join(lines)
+
+        try:
+            self.file_manager.append(filename, content)
+            print(f"File appended successfully: {filename}")
+
+        except FileNotFoundError as error:
+            print(error)
+
+        except IsADirectoryError as error:
+            print(error)
+
+        except ValueError as error:
+            print(error)
+
+        except PermissionError:
+            print(f"append: permission denied: {filename}")
     def _echo_command(self, arguments: list[str]) -> None:
         """Print text or write to file."""
         if len(arguments) == 0:
@@ -316,7 +424,29 @@ class PunasShell:
             print(error)
         except PermissionError:
             print(f"mv: permission denied")
+    def _rename_command(self, arguments: list[str]) -> None:
+        """Rename a file or directory."""
+        if len(arguments) != 2:
+            print("rename: usage: rename old_name new_name")
+            return
 
+        old_name = arguments[0]
+        new_name = arguments[1]
+
+        try:
+            self.file_manager.mv(old_name, new_name)
+            print(f"Renamed: {old_name} -> {new_name}")
+
+        except FileNotFoundError as error:
+            print(error)
+
+        except FileExistsError as error:
+            print(error)
+
+        except PermissionError:
+            print(
+                f"rename: permission denied: {old_name}"
+            )
     def _history_command(self, arguments: list[str]) -> None:
         """Display command history."""
         if arguments and arguments[0] == "-c":
@@ -471,7 +601,13 @@ class PunasShell:
             print(f"  {command}")
 
         print()
+    def _clear_command(self, arguments: list[str]) -> None:
+        """Clear the terminal screen."""
+        if arguments:
+            print("clear: too many arguments")
+            return
 
+        os.system("cls" if os.name == "nt" else "clear")
     def _exit_command(self, arguments: list[str]) -> None:
         """Exit Punas Shell."""
         self.stop()

@@ -51,7 +51,20 @@ class FileManager:
             raise FileExistsError(msg)
         
         return msg
+    def rmdir(self, name: str) -> str:
+        """Remove an empty directory."""
+        success, message = self.vfs.rmdir(name)
 
+        if not success:
+            if "Directory not empty" in message:
+                raise OSError(message)
+
+            if "Not a directory" in message:
+                raise NotADirectoryError(message)
+
+            raise FileNotFoundError(message)
+
+        return message
     def touch(self, filename: str) -> str:
         """
         Create an empty file or update its timestamp.
@@ -80,7 +93,62 @@ class FileManager:
             raise FileNotFoundError(content)
         
         return content
+    def write(self, filename: str, content: str) -> str:
+        """
+        Write content to a file.
 
+        Creates the file if it does not exist.
+        Replaces existing file content if it exists.
+        """
+        if not filename:
+            raise ValueError("write: filename cannot be empty")
+
+        success, message = self.vfs.echo(content, filename)
+
+        if not success:
+            if "is a directory" in message:
+                raise IsADirectoryError(message)
+
+            raise FileNotFoundError(message)
+
+        return message
+    def append(self, filename: str, content: str) -> str:
+        """
+        Append content to a file.
+
+        Raises FileNotFoundError if the file doesn't exist.
+        Raises IsADirectoryError if the path is a directory.
+        """
+        if not filename:
+            raise ValueError("append: filename cannot be empty")
+
+        success, existing_content = self.vfs.cat(filename)
+
+        if not success:
+            if "is a directory" in existing_content:
+                raise IsADirectoryError(existing_content)
+
+            raise FileNotFoundError(existing_content)
+
+        new_content = existing_content
+
+        if new_content:
+            new_content += "\n"
+
+        new_content += content
+
+        success, message = self.vfs.echo(
+            content=new_content,
+            filename=filename,
+        )
+
+        if not success:
+            if "is a directory" in message:
+                raise IsADirectoryError(message)
+
+            raise FileNotFoundError(message)
+
+        return message
     def echo(self, content: str, filename: str = None) -> str:
         """
         Print content or write to file.
@@ -145,3 +213,24 @@ class FileManager:
             raise FileNotFoundError(msg)
         
         return msg
+    def _rename_command(self, arguments: list[str]) -> None:
+        """Rename a file or directory."""
+        if len(arguments) != 2:
+            print("rename: usage: rename old_name new_name")
+            return
+
+        old_name = arguments[0]
+        new_name = arguments[1]
+
+        try:
+            self.file_manager.mv(old_name, new_name)
+            print(f"Renamed: {old_name} -> {new_name}")
+
+        except FileNotFoundError as error:
+            print(error)
+
+        except FileExistsError as error:
+            print(error)
+
+        except PermissionError:
+            print(f"rename: permission denied: {old_name}")
