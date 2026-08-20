@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
-const API = "http://127.0.0.1:8000";
+const API = "https://punas-power-shell-pps.onrender.com";
 
 function App() {
   const [lines, setLines] = useState([
@@ -74,10 +74,7 @@ function App() {
     window.addEventListener("focus", handleWindowFocus);
 
     return () => {
-      window.removeEventListener(
-        "focus",
-        handleWindowFocus
-      );
+      window.removeEventListener("focus", handleWindowFocus);
     };
   }, [isExecuting]);
 
@@ -101,14 +98,10 @@ function App() {
 
   const loadFiles = async () => {
     try {
-      const response = await fetch(
-        `${API}/api/files`
-      );
+      const response = await fetch(`${API}/api/files`);
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
-        );
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
@@ -122,13 +115,8 @@ function App() {
       setFiles(data.items);
       setCurrentPath(data.path);
       setConnectionError(false);
-
     } catch (error) {
-      console.error(
-        "Failed to load files:",
-        error
-      );
-
+      console.error("Failed to load files:", error);
       setConnectionError(true);
     }
   };
@@ -139,14 +127,10 @@ function App() {
 
   const loadHistory = async () => {
     try {
-      const response = await fetch(
-        `${API}/api/history`
-      );
+      const response = await fetch(`${API}/api/history`);
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
-        );
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
@@ -156,12 +140,8 @@ function App() {
         .filter(Boolean);
 
       setHistory(commandList);
-
     } catch (error) {
-      console.error(
-        "Failed to load history:",
-        error
-      );
+      console.error("Failed to load history:", error);
     }
   };
 
@@ -171,25 +151,17 @@ function App() {
 
   const loadCommands = async () => {
     try {
-      const response = await fetch(
-        `${API}/api/commands`
-      );
+      const response = await fetch(`${API}/api/commands`);
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
-        );
+        throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
 
       setCommands(data.commands || []);
-
     } catch (error) {
-      console.error(
-        "Failed to load commands:",
-        error
-      );
+      console.error("Failed to load commands:", error);
     }
   };
 
@@ -236,10 +208,7 @@ function App() {
     // NORMAL COMMAND
     // ========================================
 
-    addLine(
-      `${prompt}${cmd}`,
-      "command"
-    );
+    addLine(`${prompt}${cmd}`, "command");
 
     setCommand("");
     setHistoryIndex(-1);
@@ -248,29 +217,24 @@ function App() {
     setIsExecuting(true);
     setConnectionError(false);
 
-    const controller =
-      new AbortController();
+    const controller = new AbortController();
 
-    abortControllerRef.current =
-      controller;
+    abortControllerRef.current = controller;
 
     try {
-      const response = await fetch(
-        `${API}/api/execute`,
-        {
-          method: "POST",
+      const response = await fetch(`${API}/api/execute`, {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          body: JSON.stringify({
-            command: cmd,
-          }),
+        body: JSON.stringify({
+          command: cmd,
+        }),
 
-          signal: controller.signal,
-        }
-      );
+        signal: controller.signal,
+      });
 
       if (!response.ok) {
         throw new Error(
@@ -278,38 +242,26 @@ function App() {
         );
       }
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       // ======================================
       // COMMAND FAILED
       // ======================================
 
       if (!data.success) {
-
         if (data.output) {
           data.output
             .split("\n")
             .forEach((line) => {
               if (line.trim()) {
-                addLine(
-                  line,
-                  "error"
-                );
+                addLine(line, "error");
               }
             });
         }
 
-        if (
-          !data.error &&
-          !data.output
-        ) {
-          addLine(
-            "Command failed.",
-            "error"
-          );
+        if (!data.error && !data.output) {
+          addLine("Command failed.", "error");
         }
-
       }
 
       // ======================================
@@ -317,14 +269,10 @@ function App() {
       // ======================================
 
       else if (data.output) {
-
         data.output
           .split("\n")
           .forEach((line) => {
-            addLine(
-              line,
-              "normal"
-            );
+            addLine(line, "normal");
           });
       }
 
@@ -341,23 +289,13 @@ function App() {
       // Refresh filesystem/history
       await loadFiles();
       await loadHistory();
-
     } catch (error) {
-
       // ======================================
       // CTRL + C
       // ======================================
 
-      if (
-        error.name ===
-        "AbortError"
-      ) {
-
-        addLine(
-          "^C",
-          "error"
-        );
-
+      if (error.name === "AbortError") {
+        addLine("^C", "error");
       }
 
       // ======================================
@@ -365,7 +303,6 @@ function App() {
       // ======================================
 
       else {
-
         console.error(error);
 
         addLine(
@@ -374,19 +311,16 @@ function App() {
         );
 
         addLine(
-          "Make sure FastAPI is running on port 8000.",
+          "Make sure the online FastAPI backend is running.",
           "error"
         );
 
         setConnectionError(true);
       }
-
     } finally {
-
       setIsExecuting(false);
 
-      abortControllerRef.current =
-        null;
+      abortControllerRef.current = null;
 
       setTimeout(() => {
         inputRef.current?.focus();
@@ -412,7 +346,6 @@ function App() {
   // ==========================================
 
   const goBack = async () => {
-
     if (isExecuting) {
       return;
     }
@@ -420,46 +353,34 @@ function App() {
     setIsExecuting(true);
 
     try {
+      const response = await fetch(
+        `${API}/api/execute`,
+        {
+          method: "POST",
 
-      const response =
-        await fetch(
-          `${API}/api/execute`,
-          {
-            method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              command: "cd ..",
-            }),
-          }
-        );
+          body: JSON.stringify({
+            command: "cd ..",
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
-        );
+        throw new Error(`HTTP ${response.status}`);
       }
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
-      addLine(
-        `${prompt}cd ..`,
-        "command"
-      );
+      addLine(`${prompt}cd ..`, "command");
 
       if (data.output) {
         data.output
           .split("\n")
           .forEach((line) => {
-            addLine(
-              line,
-              "normal"
-            );
+            addLine(line, "normal");
           });
       }
 
@@ -467,18 +388,20 @@ function App() {
         setPrompt(data.prompt);
       }
 
+      setConnectionError(false);
+
       await loadFiles();
       await loadHistory();
-
     } catch (error) {
+      console.error(error);
 
       addLine(
         "Failed to navigate to parent directory.",
         "error"
       );
 
+      setConnectionError(true);
     } finally {
-
       setIsExecuting(false);
 
       focusTerminal();
@@ -499,75 +422,54 @@ function App() {
   // OPEN DIRECTORY
   // ==========================================
 
-  const openDirectory = async (
-    name
-  ) => {
-
+  const openDirectory = async (name) => {
     if (isExecuting) {
       return;
     }
 
     const cmd = `cd ${name}`;
 
-    addLine(
-      `${prompt}${cmd}`,
-      "command"
-    );
+    addLine(`${prompt}${cmd}`, "command");
 
     setIsExecuting(true);
 
     try {
+      const response = await fetch(
+        `${API}/api/execute`,
+        {
+          method: "POST",
 
-      const response =
-        await fetch(
-          `${API}/api/execute`,
-          {
-            method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              command: cmd,
-            }),
-          }
-        );
+          body: JSON.stringify({
+            command: cmd,
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(
-          `HTTP ${response.status}`
-        );
+        throw new Error(`HTTP ${response.status}`);
       }
 
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!data.success) {
-
         if (data.output) {
           data.output
             .split("\n")
             .forEach((line) => {
               if (line.trim()) {
-                addLine(
-                  line,
-                  "error"
-                );
+                addLine(line, "error");
               }
             });
         }
-
       } else if (data.output) {
-
         data.output
           .split("\n")
           .forEach((line) => {
-            addLine(
-              line,
-              "normal"
-            );
+            addLine(line, "normal");
           });
       }
 
@@ -575,18 +477,20 @@ function App() {
         setPrompt(data.prompt);
       }
 
+      setConnectionError(false);
+
       await loadFiles();
       await loadHistory();
-
     } catch (error) {
+      console.error(error);
 
       addLine(
         `Unable to open directory '${name}'.`,
         "error"
       );
 
+      setConnectionError(true);
     } finally {
-
       setIsExecuting(false);
 
       focusTerminal();
@@ -598,9 +502,7 @@ function App() {
   // ==========================================
 
   const handleAutocomplete = () => {
-
-    const value =
-      command.trim();
+    const value = command.trim();
 
     if (!value) {
       return;
@@ -611,22 +513,15 @@ function App() {
       return;
     }
 
-    const matches =
-      commands.filter(
-        (cmd) =>
-          cmd
-            .toLowerCase()
-            .startsWith(
-              value.toLowerCase()
-            )
-      );
+    const matches = commands.filter((cmd) =>
+      cmd
+        .toLowerCase()
+        .startsWith(value.toLowerCase())
+    );
 
     // One match
     if (matches.length === 1) {
-
-      setCommand(
-        `${matches[0]} `
-      );
+      setCommand(`${matches[0]} `);
 
       focusTerminal();
 
@@ -635,7 +530,6 @@ function App() {
 
     // Multiple matches
     if (matches.length > 1) {
-
       addLine(
         matches.join("    "),
         "suggestion"
@@ -649,18 +543,12 @@ function App() {
   // KEYBOARD HANDLER
   // ==========================================
 
-  const handleKeyDown = (
-    event
-  ) => {
-
+  const handleKeyDown = (event) => {
     // ========================================
     // ENTER
     // ========================================
 
-    if (
-      event.key === "Enter"
-    ) {
-
+    if (event.key === "Enter") {
       event.preventDefault();
 
       executeCommand();
@@ -672,10 +560,7 @@ function App() {
     // TAB
     // ========================================
 
-    if (
-      event.key === "Tab"
-    ) {
-
+    if (event.key === "Tab") {
       event.preventDefault();
 
       handleAutocomplete();
@@ -691,7 +576,6 @@ function App() {
       event.ctrlKey &&
       event.key.toLowerCase() === "l"
     ) {
-
       event.preventDefault();
 
       clearTerminal();
@@ -707,23 +591,14 @@ function App() {
       event.ctrlKey &&
       event.key.toLowerCase() === "c"
     ) {
-
       event.preventDefault();
 
       if (isExecuting) {
-
-        abortControllerRef
-          .current
-          ?.abort();
-
+        abortControllerRef.current?.abort();
       } else {
-
         setCommand("");
 
-        addLine(
-          "^C",
-          "error"
-        );
+        addLine("^C", "error");
       }
 
       focusTerminal();
@@ -735,24 +610,15 @@ function App() {
     // ARROW UP
     // ========================================
 
-    if (
-      event.key === "ArrowUp"
-    ) {
-
+    if (event.key === "ArrowUp") {
       event.preventDefault();
 
-      if (
-        history.length === 0
-      ) {
+      if (history.length === 0) {
         return;
       }
 
-      if (
-        historyIndex === -1
-      ) {
-
-        draftCommandRef.current =
-          command;
+      if (historyIndex === -1) {
+        draftCommandRef.current = command;
       }
 
       const nextIndex =
@@ -763,13 +629,9 @@ function App() {
               historyIndex - 1
             );
 
-      setHistoryIndex(
-        nextIndex
-      );
+      setHistoryIndex(nextIndex);
 
-      setCommand(
-        history[nextIndex]
-      );
+      setCommand(history[nextIndex]);
 
       return;
     }
@@ -778,15 +640,10 @@ function App() {
     // ARROW DOWN
     // ========================================
 
-    if (
-      event.key === "ArrowDown"
-    ) {
-
+    if (event.key === "ArrowDown") {
       event.preventDefault();
 
-      if (
-        historyIndex === -1
-      ) {
+      if (historyIndex === -1) {
         return;
       }
 
@@ -794,7 +651,6 @@ function App() {
         historyIndex ===
         history.length - 1
       ) {
-
         setHistoryIndex(-1);
 
         setCommand(
@@ -804,16 +660,11 @@ function App() {
         return;
       }
 
-      const nextIndex =
-        historyIndex + 1;
+      const nextIndex = historyIndex + 1;
 
-      setHistoryIndex(
-        nextIndex
-      );
+      setHistoryIndex(nextIndex);
 
-      setCommand(
-        history[nextIndex]
-      );
+      setCommand(history[nextIndex]);
     }
   };
 
@@ -886,36 +737,32 @@ function App() {
 
             <div className="file-list">
 
-              {files.map(
-                (item) => (
+              {files.map((item) => (
 
-                  <div
-                    key={item.name}
-                    className="file-item"
+                <div
+                  key={item.name}
+                  className="file-item"
 
-                    onDoubleClick={() =>
-                      item.type === "dir"
-                        ? openDirectory(
-                            item.name
-                          )
-                        : null
-                    }
-                  >
+                  onDoubleClick={() =>
+                    item.type === "dir"
+                      ? openDirectory(item.name)
+                      : null
+                  }
+                >
 
-                    <span className="file-icon">
-                      {item.type === "dir"
-                        ? "📁"
-                        : "📄"}
-                    </span>
+                  <span className="file-icon">
+                    {item.type === "dir"
+                      ? "📁"
+                      : "📄"}
+                  </span>
 
-                    <span>
-                      {item.name}
-                    </span>
+                  <span>
+                    {item.name}
+                  </span>
 
-                  </div>
+                </div>
 
-                )
-              )}
+              ))}
 
             </div>
 
@@ -926,13 +773,13 @@ function App() {
           <main
             className="terminal-body"
             ref={terminalRef}
+
             onMouseDown={(event) => {
 
               if (
                 event.target.tagName !==
                 "INPUT"
               ) {
-
                 event.preventDefault();
 
                 focusTerminal();
@@ -941,18 +788,16 @@ function App() {
             }}
           >
 
-            {lines.map(
-              (line, index) => (
+            {lines.map((line, index) => (
 
-                <div
-                  className={`terminal-line ${line.type}`}
-                  key={index}
-                >
-                  {line.text}
-                </div>
+              <div
+                className={`terminal-line ${line.type}`}
+                key={index}
+              >
+                {line.text}
+              </div>
 
-              )
-            )}
+            ))}
 
             {/* EXECUTION INDICATOR */}
 
@@ -990,9 +835,7 @@ function App() {
 
                 }}
 
-                onKeyDown={
-                  handleKeyDown
-                }
+                onKeyDown={handleKeyDown}
 
                 autoFocus
 
@@ -1000,9 +843,7 @@ function App() {
 
                 spellCheck="false"
 
-                disabled={
-                  isExecuting
-                }
+                disabled={isExecuting}
               />
 
             </div>
