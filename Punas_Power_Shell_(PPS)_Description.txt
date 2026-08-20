@@ -1,0 +1,14 @@
+Punas Power Shell (PPS) – Project Description
+
+Punas Power Shell (PPH) is a Python-based interactive command-line shell designed to simulate the core functionality of a Linux terminal while being built entirely from scratch using Python's standard library. The project aims to provide a hands-on understanding of how command-line interpreters work, including command parsing, file system operations, process flow, logging, configuration management, and shell architecture.
+
+PPS offers an interactive environment where users can execute common terminal commands such as pwd, ls, cd, mkdir, touch, cat, rm, and many others. The shell continuously accepts user input, interprets commands, executes the appropriate functionality, and displays the results, closely resembling the behaviour of a real Linux shell.
+
+The project is developed using a modular, object-oriented architecture, separating responsibilities into components such as the shell engine, command parser, file manager, history manager, logger, and configuration manager. This design makes the codebase maintainable, scalable, and easy to extend with new commands and features.
+
+Beyond basic command execution, PPS is planned to include advanced capabilities such as command history, command aliases, environment variables, coloured terminal output, auto-completion, logging, configuration files, wildcard expansion, pipes, input/output redirection, background task execution, and command scripting.
+
+The primary objective of Punas Power Shell is educational: to help developers understand the internal workings of operating system shells while applying software engineering principles such as object-oriented programming, modular design, exception handling, logging, and configuration management. By the end of the project, PPS will serve as both a functional miniature shell and a professional GitHub portfolio project demonstrating practical knowledge of Python, operating systems, and command-line application development.
+
+-Powered By:
+Mohamed Irban S. B.Tech in AI&DS

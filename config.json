@@ -1,0 +1,9 @@
+{
+  "theme": "default",
+  "prompt_format": "psh",
+  "history_size": 500,
+  "log_file": "shell.log",
+  "enable_logging": true,
+  "colors_enabled": false,
+  "auto_cd": false
+}
