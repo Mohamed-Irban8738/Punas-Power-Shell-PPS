@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mohamed-irban8738.github.io/Punas-Power-Shell-PPS/sitemap.xml
